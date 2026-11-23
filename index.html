@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dosen Simulator - Bertahan 90 Menit Tanpa Ketahuan</title>
+<meta name="description" content="Game teks lucu: bertahan di kelas dosen tanpa ketahuan ngantuk. Bagikan hasilmu!">
+<style>
+  :root { --bg:#12121f; --card:#1d1d33; --acc:#ffcc4d; --red:#ff5d6c; --blue:#5db8ff; --green:#5dffa0; --txt:#f2f2fa; }
+  * { box-sizing:border-box; }
+  body { margin:0; min-height:100vh; background:var(--bg); color:var(--txt); font-family:system-ui,Segoe UI,Roboto,sans-serif; display:flex; justify-content:center; padding:16px; }
+  main { width:100%; max-width:520px; }
+  h1 { font-size:1.6rem; margin:8px 0 4px; text-align:center; }
+  .sub { text-align:center; opacity:.7; margin-bottom:16px; font-size:.95rem; }
+  .card { background:var(--card); border-radius:16px; padding:18px; margin-bottom:14px; box-shadow:0 6px 20px #0006; }
+  .emoji { font-size:3.2rem; text-align:center; }
+  button { width:100%; padding:13px 14px; margin-top:9px; border:0; border-radius:12px; background:#2c2c4d; color:var(--txt); font-size:1rem; text-align:left; cursor:pointer; transition:.15s; }
+  button:hover { background:#3a3a66; transform:translateY(-1px); }
+  button.main { background:var(--acc); color:#222; font-weight:700; text-align:center; }
+  .bars { display:grid; gap:8px; }
+  .bar { font-size:.8rem; }
+  .track { height:12px; background:#0006; border-radius:8px; overflow:hidden; margin-top:3px; }
+  .fill { height:100%; width:0; transition:width .4s; }
+  .top { display:flex; justify-content:space-between; font-size:.9rem; opacity:.8; margin-bottom:10px; }
+  .result { background:#0004; border-left:4px solid var(--acc); padding:10px 12px; border-radius:8px; margin-top:12px; }
+  .hidden { display:none; }
+  .big { font-size:2.4rem; text-align:center; color:var(--acc); font-weight:800; }
+  canvas { width:100%; border-radius:12px; margin-top:10px; }
+  .small { font-size:.8rem; opacity:.6; text-align:center; margin-top:8px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>🎓 Dosen Simulator</h1>
+  <div class="sub">Bertahan 90 menit tanpa ketahuan ngantuk.</div>
+
+  <section id="start" class="card">
+    <div class="emoji">😴👨‍🏫</div>
+    <p>Kamu duduk di baris ketiga. Semalam begadang. Dosen lagi menjelaskan sesuatu yang bahkan dia sendiri nggak yakin. Pilih tindakanmu dengan bijak.</p>
+    <p>🥱 <b>Ngantuk</b> penuh = tertidur. 👀 <b>Curiga</b> penuh = dipanggil maju. ⭐ <b>Gaya</b> adalah skor akhirmu.</p>
+    <button class="main" id="btnStart">Mulai Kuliah</button>
+    <div class="small" id="best"></div>
+  </section>
+
+  <section id="game" class="hidden">
+    <div class="card">
+      <div class="top"><span id="clock"></span><span id="round"></span></div>
+      <div class="bars">
+        <div class="bar">🥱 Ngantuk <div class="track"><div class="fill" id="bS" style="background:var(--blue)"></div></div></div>
+        <div class="bar">👀 Curiga Dosen <div class="track"><div class="fill" id="bC" style="background:var(--red)"></div></div></div>
+        <div class="bar">⭐ Gaya: <b id="pts">0</b></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="emoji" id="ev-emoji"></div>
+      <p id="ev-text"></p>
+      <div id="choices"></div>
+      <div id="result" class="result hidden"></div>
+      <button class="main hidden" id="btnNext">Lanjut ➜</button>
+    </div>
+  </section>
+
+  <section id="end" class="card hidden">
+    <div class="emoji" id="end-emoji"></div>
+    <h2 id="end-title" style="text-align:center;margin:6px 0"></h2>
+    <p id="end-desc" style="text-align:center"></p>
+    <div class="big" id="end-score"></div>
+    <canvas id="cv" width="800" height="800"></canvas>
+    <button class="main" id="btnShare">📤 Bagikan Hasil</button>
+    <button class="main" id="btnAgain" style="background:#5dffa0">🔁 Main Lagi</button>
+  </section>
+  <div class="small">Dibuat untuk mahasiswa yang pernah pura-pura paham. 😌</div>
+</main>
+
+<script>
+// Efek: s = ngantuk, c = curiga, p = gaya
+const EVENTS = [
+  { e:"📊", t:"Dosen mulai slide ke-47 dengan 300 kata per halaman. Matamu mulai berat.", o:[
+    ["Minum kopi sachet dari tas", {s:-25,c:5,p:5}, "Kopi hangat menyelamatkanmu. Aromanya menyebar sedikit."],
+    ["Pura-pura mencatat (padahal gambar)", {s:5,c:-10,p:10}, "Gambar kucing di buku catatanmu terlihat sangat serius."],
+    ["Tutup mata sebentar 'mikir'", {s:-10,c:20,p:-5}, "Kamu terlihat sangat tenang. Terlalu tenang."]]},
+  { e:"🙋", t:"Dosen: \"Ada yang bisa jelaskan ulang apa yang barusan saya bilang?\"", o:[
+    ["Tunduk pura-pura baca buku", {s:0,c:20,p:0}, "Ketahuan menghindar. Dosen menatap ke arahmu."],
+    ["Jawab asal tapi percaya diri", {s:-10,c:-15,p:20}, "Dosen mengangguk, \"Hmm, menarik.\" Kamu sendiri bingung."],
+    ["Colek teman sebelah", {s:0,c:10,p:5}, "Temanmu menjawab. Kamu berutang gorengan."]]},
+  { e:"📱", t:"HP-mu bergetar. Grup kelas: \"Ada yang udah ngerjain tugas?\"", o:[
+    ["Balas diam-diam di bawah meja", {s:-10,c:25,p:10}, "Jempolmu cepat, tapi dosen punya mata elang."],
+    ["Abaikan, fokus ke dosen", {s:10,c:-5,p:5}, "Kamu hebat, tapi jadi makin ngantuk."],
+    ["Taruh HP di tas, aman", {s:0,c:-10,p:0}, "Aman, walau penasaran setengah mati."]]},
+  { e:"🍜", t:"Perutmu keroncongan, suaranya terdengar sampai depan kelas.", o:[
+    ["Batuk keras menutupi suara", {s:0,c:20,p:5}, "Batukmu terlalu dramatis. Satu kelas menoleh."],
+    ["Makan permen diam-diam", {s:-15,c:10,p:5}, "Kriuk. Permennya ternyata keras."],
+    ["Pasrah dan tahan", {s:10,c:0,p:0}, "Perutmu pasrah, matamu ikut pasrah."]]},
+  { e:"🪑", t:"Kursi di belakangmu berderit keras. Dosen berhenti bicara dan melihat ke arahmu.", o:[
+    ["Pasang wajah serius mengangguk", {s:-10,c:-10,p:15}, "Dosen tersenyum, merasa dipahami."],
+    ["Menunduk dalam-dalam", {s:5,c:20,p:-5}, "Dosen mengira kamu tertidur."],
+    ["Tanya \"Pak, boleh diulang?\"", {s:-5,c:-20,p:20}, "Pertanyaan sakti! Dosen senang diminta mengulang."]]},
+  { e:"🧊", t:"AC kelas dingin banget, hangat dan nyaman. Terlalu nyaman.", o:[
+    ["Cubit paha sendiri", {s:-20,c:0,p:5}, "Sakit, tapi segar."],
+    ["Pakai jaket, sandaran sedikit", {s:15,c:5,p:0}, "Kenyamanan adalah musuh terbesarmu."],
+    ["Berdiri minta izin ke toilet", {s:-30,c:15,p:-5}, "Kamu kabur sebentar. Cuci muka, bangkit lagi."]]},
+  { e:"📝", t:"Dosen: \"Besok ada kuis dadakan.\" Seluruh kelas panik.", o:[
+    ["Catat semuanya sekarang", {s:-15,c:-10,p:15}, "Mendadak rajin. Dosen terkesan."],
+    ["Pura-pura nggak dengar", {s:10,c:5,p:-5}, "Tenang, besok bisa nyontek ... mungkin."],
+    ["Foto papan tulis", {s:0,c:0,p:10}, "Foto 200 buah, yang dibaca 0."]]},
+  { e:"😂", t:"Dosen bercanda garing. Satu kelas hening, lalu seseorang tertawa canggung.", o:[
+    ["Tertawa keras biar nggak canggung", {s:-10,c:-15,p:15}, "Dosen menunjuk: \"Nah, ini baru mahasiswa paham!\""],
+    ["Menahan tawa sampai bergetar", {s:0,c:15,p:10}, "Bahumu bergetar. Dosen bingung."],
+    ["Tanpa ekspresi sama sekali", {s:5,c:5,p:0}, "Aman. Tapi suasana makin dingin."]]},
+  { e:"🔋", t:"Powerbank temanmu menyala dan lampunya berkedip terang di tengah kelas.", o:[
+    ["Tutup pakai tangan, sok bantu", {s:0,c:-5,p:10}, "Pahlawan tak dikenal."],
+    ["Bisik: \"Matiin woi!\"", {s:0,c:20,p:5}, "Bisikanmu lebih keras dari lampunya."],
+    ["Pura-pura nggak lihat", {s:5,c:10,p:0}, "Dosen melihat ke arah teman, lalu ke arahmu."]]},
+  { e:"👨‍🏫", t:"Dosen berjalan pelan ke arah barisanmu sambil menjelaskan.", o:[
+    ["Buka buku, pura-pura baca", {s:5,c:-15,p:10}, "Dosen lewat sambil mengangguk puas."],
+    ["Tatap mata dosen terus", {s:-10,c:-5,p:15}, "Kontak mata total. Kamu terlihat sangat tertarik."],
+    ["Geser badan sembunyi di balik teman", {s:0,c:25,p:-5}, "Teman badan besar yang jadi tamengmu. Mencurigakan."]]},
+  { e:"🎧", t:"Kamu punya earphone kecil. Lagu favoritmu baru rilis.", o:[
+    ["Pakai satu sambil rambut menutupi", {s:-20,c:30,p:15}, "Berisiko, tapi lagunya enak banget."],
+    ["Simpan dulu, nanti aja", {s:5,c:-5,p:0}, "Disiplin. Hidup terasa hampa."],
+    ["Dengerin lewat HP volume 1", {s:-10,c:10,p:5}, "Samar-samar terdengar, mirip nyamuk."]]},
+  { e:"📚", t:"Dosen membagikan makalah. \"Kerjakan berkelompok, 5 menit!\"", o:[
+    ["Ambil peran notulen", {s:-10,c:-15,p:15}, "Notulen aman karena selalu 'sibuk menulis'."],
+    ["Jadi presentator dadakan", {s:-25,c:-10,p:25}, "Adrenalin menghapus ngantukmu!"],
+    ["Ikut sekadar mengangguk", {s:10,c:5,p:0}, "Pura-pura kontribusi itu bakat."]]},
+  { e:"⏰", t:"Jam menunjukkan masih 45 menit lagi. Waktu terasa melambat.", o:[
+    ["Hitung ubin lantai", {s:5,c:-5,p:5}, "Ada 48 ubin. Kamu tahu karena menghitungnya."],
+    ["Doodle wajah dosen", {s:-5,c:0,p:10}, "Mirip! Kamu berbakat tapi jangan ketahuan."],
+    ["Pasrah tidur sambil duduk tegap", {s:-5,c:15,p:-10}, "Tidur dengan mata terbuka itu skill, tapi riskan."]]},
+  { e:"🚪", t:"Pintu kelas terbuka. Ada mahasiswa terlambat masuk sambil membawa gorengan.", o:[
+    ["Minta gorengannya pelan-pelan", {s:-10,c:15,p:10}, "Rejeki anak kuliah. Minyaknya merembes ke buku."],
+    ["Fokus ke dosen saja", {s:5,c:-10,p:5}, "Gorengan itu terus menggodamu."],
+    ["Ikut telat ke kelas berikutnya", {s:0,c:5,p:5}, "Planning ke depan. Visioner."]]},
+  { e:"🎤", t:"Dosen: \"Kita absen manual hari ini, tanda tangan ya.\"", o:[
+    ["Tanda tangan sendiri, rapi", {s:0,c:-5,p:10}, "Beres, tanpa drama."],
+    ["Tanda tangan teman yang bolos", {s:0,c:30,p:20}, "Gaya premannya tinggi, risikonya juga."],
+    ["Pura-pura nggak lihat lembar absen", {s:0,c:10,p:-10}, "Lembar absen berjalan melewatimu. Kamu lupa tanda tangan."]]}
+];
+
+const TOTAL = 12;
+const st = { s:30, c:10, p:0, round:0, used:[], ev:null, over:false };
+const $ = id => document.getElementById(id);
+const clamp = n => Math.max(0, Math.min(100, n));
+const fmtClock = r => { const m = 8*60 + Math.round(r*90/TOTAL); return String(Math.floor(m/60)).padStart(2,"0")+":"+String(m%60).padStart(2,"0"); };
+
+function show(id) { ["start","game","end"].forEach(x => $(x).classList.toggle("hidden", x !== id)); }
+function render() {
+  $("bS").style.width = st.s + "%"; $("bC").style.width = st.c + "%";
+  $("pts").textContent = st.p;
+  $("clock").textContent = "🕗 " + fmtClock(st.round);
+  $("round").textContent = "Sesi " + Math.min(st.round+1, TOTAL) + "/" + TOTAL;
+}
+function bestScore() { return +(localStorage.getItem("dosen-best") || 0); }
+
+function start() {
+  Object.assign(st, { s:30, c:10, p:0, round:0, used:[], ev:null, over:false });
+  show("game"); nextEvent();
+}
+function nextEvent() {
+  if (st.round >= TOTAL) return finish("survive");
+  let i; do { i = Math.floor(Math.random()*EVENTS.length); } while (st.used.includes(i));
+  st.used.push(i); st.ev = EVENTS[i];
+  $("ev-emoji").textContent = st.ev.e; $("ev-text").textContent = st.ev.t;
+  const box = $("choices"); box.innerHTML = "";
+  st.ev.o.forEach(([label, eff, res]) => {
+    const b = document.createElement("button"); b.textContent = label;
+    b.onclick = () => choose(eff, res); box.appendChild(b);
+  });
+  $("result").classList.add("hidden"); $("btnNext").classList.add("hidden");
+  render();
+}
+function choose(eff, res) {
+  // Ngantuk naik sedikit tiap sesi supaya game tidak mudah
+  st.s = clamp(st.s + eff.s + 4); st.c = clamp(st.c + eff.c); st.p = Math.max(0, st.p + eff.p);
+  st.round++;
+  $("choices").innerHTML = "";
+  const r = $("result"); r.textContent = res; r.classList.remove("hidden");
+  render();
+  if (st.s >= 100) return setTimeout(() => finish("tidur"), 900);
+  if (st.c >= 100) return setTimeout(() => finish("kepergok"), 900);
+  $("btnNext").classList.remove("hidden");
+}
+
+const ENDINGS = {
+  tidur:   { e:"💤", t:"Tertidur Ngorok", d:"Kepalamu jatuh ke meja. Suaramu bergema. Dosen berhenti bicara." },
+  kepergok:{ e:"🚨", t:"Dipanggil Maju!", d:"\"Kamu yang di baris ketiga. Coba jelaskan di depan.\" Kelas hening." },
+};
+function survivalEnding() {
+  const sc = st.p;
+  if (sc >= 140) return { e:"👑", t:"Mahasiswa Legenda", d:"Dosen mengira kamu paling paham. Kamu sendiri tidak tahu apa-apa." };
+  if (sc >= 90)  return { e:"😎", t:"Ahli Pura-pura Paham", d:"Kamu selamat dengan gaya. Nilai aman, hati tenang." };
+  if (sc >= 50)  return { e:"🙂", t:"Mahasiswa Standar", d:"Selamat sampai akhir. Tidak ada yang curiga. Atau pura-pura tidak curiga." };
+  return { e:"😮‍💨", t:"Bertahan Hidup Tipis-tipis", d:"Kamu lolos, tapi keringat dingin sepanjang kuliah." };
+}
+function finish(kind) {
+  st.over = true;
+  const end = kind === "survive" ? survivalEnding() : ENDINGS[kind];
+  const score = kind === "survive" ? st.p + Math.round((100 - st.c) / 2) : Math.round(st.p / 2);
+  st.result = { ...end, score, kind };
+  if (score > bestScore()) localStorage.setItem("dosen-best", score);
+  $("end-emoji").textContent = end.e; $("end-title").textContent = end.t;
+  $("end-desc").textContent = end.d; $("end-score").textContent = score + " poin";
+  drawCard(); show("end"); updateBest();
+}
+function updateBest() { $("best").textContent = bestScore() ? "🏆 Skor terbaikmu: " + bestScore() : ""; }
+
+function wrap(ctx, text, x, y, maxW, lh) {
+  let line = "";
+  text.split(" ").forEach(w => {
+    const test = line + w + " ";
+    if (ctx.measureText(test).width > maxW && line) { ctx.fillText(line, x, y); line = w + " "; y += lh; }
+    else line = test;
+  });
+  ctx.fillText(line, x, y);
+}
+function drawCard() {
+  const cv = $("cv"), ctx = cv.getContext("2d"), r = st.result;
+  const g = ctx.createLinearGradient(0,0,800,800); g.addColorStop(0,"#2b1055"); g.addColorStop(1,"#12121f");
+  ctx.fillStyle = g; ctx.fillRect(0,0,800,800);
+  ctx.textAlign = "center"; ctx.fillStyle = "#fff";
+  ctx.font = "bold 44px sans-serif"; ctx.fillText("🎓 DOSEN SIMULATOR", 400, 90);
+  ctx.font = "200px sans-serif"; ctx.fillText(r.e, 400, 330);
+  ctx.fillStyle = "#ffcc4d"; ctx.font = "bold 62px sans-serif"; ctx.fillText(r.t, 400, 440);
+  ctx.fillStyle = "#fff"; ctx.font = "30px sans-serif"; wrap(ctx, r.d, 400, 510, 640, 40);
+  ctx.fillStyle = "#5dffa0"; ctx.font = "bold 76px sans-serif"; ctx.fillText(r.score + " poin", 400, 680);
+  ctx.fillStyle = "#ffffff99"; ctx.font = "26px sans-serif"; ctx.fillText("Berani coba kalahin skorku?", 400, 740);
+}
+async function share() {
+  const r = st.result, text = `Aku dapat "${r.t}" (${r.score} poin) di Dosen Simulator! Berani coba kalahin? ${location.href}`;
+  const blob = await new Promise(res => $("cv").toBlob(res, "image/png"));
+  const file = new File([blob], "dosen-simulator.png", { type: "image/png" });
+  try {
+    if (navigator.canShare && navigator.canShare({ files:[file] })) return await navigator.share({ files:[file], text });
+    if (navigator.share) return await navigator.share({ text });
+  } catch (_) { return; }
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "dosen-simulator.png"; a.click();
+  navigator.clipboard && navigator.clipboard.writeText(text);
+  alert("Gambar diunduh & teks disalin. Tempel di story/grup kamu!");
+}
+
+$("btnStart").onclick = start; $("btnNext").onclick = nextEvent;
+$("btnAgain").onclick = start; $("btnShare").onclick = share;
+updateBest();
+</script>
+</body>
+</html>
