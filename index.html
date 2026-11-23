@@ -3,362 +3,87 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Dosen Simulator - Bertahan 90 Menit Tanpa Ketahuan</title>
-<meta name="description" content="Game teks lucu: bertahan di kelas dosen tanpa ketahuan ngantuk. Bagikan hasilmu!">
-<style>
-  :root { --bg:#12121f; --card:#1d1d33; --acc:#ffcc4d; --red:#ff5d6c; --blue:#5db8ff; --green:#5dffa0; --txt:#f2f2fa; }
-  * { box-sizing:border-box; }
-  body { margin:0; min-height:100vh; background:var(--bg); color:var(--txt); font-family:system-ui,Segoe UI,Roboto,sans-serif; display:flex; justify-content:center; padding:16px; }
-  main { width:100%; max-width:520px; }
-  h1 { font-size:1.6rem; margin:8px 0 4px; text-align:center; }
-  .sub { text-align:center; opacity:.7; margin-bottom:16px; font-size:.95rem; }
-  .card { background:var(--card); border-radius:16px; padding:18px; margin-bottom:14px; box-shadow:0 6px 20px #0006; }
-  .emoji { font-size:3.2rem; text-align:center; }
-  button { width:100%; padding:13px 14px; margin-top:9px; border:0; border-radius:12px; background:#2c2c4d; color:var(--txt); font-size:1rem; text-align:left; cursor:pointer; transition:.15s; }
-  button:hover { background:#3a3a66; transform:translateY(-1px); }
-  button.main { background:var(--acc); color:#222; font-weight:700; text-align:center; }
-  .bars { display:grid; gap:8px; }
-  .bar { font-size:.8rem; }
-  .track { height:12px; background:#0006; border-radius:8px; overflow:hidden; margin-top:3px; }
-  .fill { height:100%; width:0; transition:width .4s; }
-  .top { display:flex; justify-content:space-between; font-size:.9rem; opacity:.8; margin-bottom:10px; }
-  .result { background:#0004; border-left:4px solid var(--acc); padding:10px 12px; border-radius:8px; margin-top:12px; }
-  .hidden { display:none !important; }
-  .big { font-size:2.4rem; text-align:center; color:var(--acc); font-weight:800; }
-  canvas { width:100%; border-radius:12px; margin-top:10px; }
-  .small { font-size:.8rem; opacity:.6; text-align:center; margin-top:8px; }
-
-  #sceneWrap { position:relative; margin-bottom:14px; border-radius:16px; overflow:hidden; box-shadow:0 6px 20px #0006; border:2px solid #ffffff14; transition:box-shadow .3s; }
-  #sceneWrap.danger { box-shadow:0 0 0 3px var(--red), 0 0 30px #ff5d6c88; }
-  #sceneWrap.shake { animation:shake .45s; }
-  #sceneWrap.good { animation:goodpulse .5s; }
-  svg { display:block; width:100%; height:auto; }
-  @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-7px)} 40%{transform:translateX(7px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(5px)} }
-  @keyframes goodpulse { 50%{transform:scale(1.03)} }
-  @keyframes floatz { 0%{transform:translate(0,0);opacity:0} 20%{opacity:1} 100%{transform:translate(14px,-26px);opacity:0} }
-  @keyframes glare { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
-  @keyframes blink { 0%,92%,100%{transform:scaleY(1)} 96%{transform:scaleY(.1)} }
-  @keyframes nodA { 0%,100%{transform:rotate(0)} 50%{transform:rotate(7deg)} }
-  @keyframes nodB { 0%,100%{transform:rotate(4deg)} 50%{transform:rotate(16deg)} }
-  @keyframes rise { 0%{opacity:0;transform:translateY(10px)} 15%{opacity:1} 100%{opacity:0;transform:translateY(-34px)} }
-  @keyframes pop { 0%{transform:scale(.4);opacity:0} 70%{transform:scale(1.2)} 100%{transform:scale(1);opacity:1} }
-  @keyframes slide { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
-  .zzz text { animation:floatz 2.4s infinite; font-weight:800; fill:#cfe8ff; }
-  .zzz text:nth-child(2){animation-delay:.8s} .zzz text:nth-child(3){animation-delay:1.6s}
-  #stu { transform-box:fill-box; transform-origin:50% 100%; transition:transform .4s; }
-  #stu.nod { animation:nodA 2.2s infinite; } #stu.nod2 { animation:nodB 1.6s infinite; }
-  #dosen { transform-box:fill-box; transform-origin:50% 100%; }
-  #dosen.alert { animation:glare .6s infinite; }
-  .eyes { transform-box:fill-box; transform-origin:center; animation:blink 4s infinite; }
-  #fx { position:absolute; inset:0; pointer-events:none; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; }
-  .pill { font-weight:800; padding:3px 10px; border-radius:20px; background:#000a; animation:rise 1.3s forwards; font-size:.95rem; }
-  .emoji { animation:pop .35s; }
-  #choices button { animation:slide .3s backwards; }
-  #choices button:nth-child(2){animation-delay:.07s} #choices button:nth-child(3){animation-delay:.14s}
-  .title { background:linear-gradient(90deg,#ffcc4d,#ff5d6c); -webkit-background-clip:text; background-clip:text; color:transparent; }
-</style>
+<title>Mahasiswa Baru: Semester Pertama yang Berantakan</title>
+<meta name="description" content="Game cerita kampus: pilih jalanmu, temukan tipe kepribadianmu, dan jangan ketahuan ngantuk.">
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<main>
-  <h1 class="title">🎓 Dosen Simulator</h1>
-  <div class="sub">Bertahan 90 menit tanpa ketahuan ngantuk.</div>
+<div id="app">
+  <header id="hud" class="hidden">
+    <div id="stats"></div>
+    <div id="fxbar"></div>
+  </header>
 
-  <div id="sceneWrap">
-  <svg id="scene" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ilustrasi kelas">
-    <defs>
-      <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#34345e"/><stop offset="1" stop-color="#262646"/></linearGradient>
-    </defs>
-    <rect width="400" height="200" fill="url(#wall)"/>
-    <rect y="165" width="400" height="35" fill="#3b2f4d"/>
-    <rect y="163" width="400" height="4" fill="#2a2038"/>
-    <circle cx="55" cy="42" r="20" fill="#f4f1e8" stroke="#8b5a2b" stroke-width="4"/>
-    <line x1="55" y1="42" x2="55" y2="30" stroke="#222" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="55" y1="42" x2="64" y2="46" stroke="#222" stroke-width="2.5" stroke-linecap="round"/>
-    <rect x="112" y="18" width="170" height="78" rx="4" fill="#1f5a44" stroke="#8b5a2b" stroke-width="5"/>
-    <text x="124" y="42" fill="#e8f5ee" font-size="13" font-family="monospace" font-weight="bold">BAB 7: ???</text>
-    <path d="M124 54 q10 -10 20 0 t20 0 t20 0 t20 0 t20 0" stroke="#e8f5ee" fill="none" stroke-width="1.6" opacity=".8"/>
-    <path d="M124 68 h90 M124 78 h60" stroke="#e8f5ee" stroke-width="1.6" opacity=".6"/>
-    <text x="238" y="84" fill="#ffcc4d" font-size="16" font-family="monospace">x=?</text>
-
-    <g id="friend">
-      <rect x="190" y="136" width="32" height="30" rx="8" fill="#9b6bff"/>
-      <circle cx="206" cy="122" r="17" fill="#e0b48a"/>
-      <path d="M189 120 a17 17 0 0 1 34 0 z" fill="#3a2a1a"/>
-      <circle cx="200" cy="124" r="2" fill="#222"/><circle cx="212" cy="124" r="2" fill="#222"/>
-      <path d="M201 131 q5 3 10 0" stroke="#222" fill="none" stroke-width="1.5"/>
-      <rect x="165" y="150" width="82" height="9" rx="3" fill="#8b5a2b"/>
-    </g>
-
-    <g id="dosen">
-      <line x1="338" y1="122" x2="298" y2="76" stroke="#d9b36a" stroke-width="3" stroke-linecap="round"/>
-      <rect x="318" y="112" width="40" height="55" rx="10" fill="#c0392b"/>
-      <polygon points="338,114 333,140 338,148 343,140" fill="#ffd36a"/>
-      <rect x="326" y="164" width="9" height="4" fill="#222"/><rect x="341" y="164" width="9" height="4" fill="#222"/>
-      <circle cx="338" cy="94" r="21" fill="#e0b48a"/>
-      <path d="M317 90 a21 21 0 0 1 42 0 q-8 -9 -21 -9 q-13 0 -21 9z" fill="#bdbdbd"/>
-      <g stroke="#222" stroke-width="2" fill="#fff"><circle cx="330" cy="95" r="7"/><circle cx="346" cy="95" r="7"/></g>
-      <line x1="337" y1="95" x2="339" y2="95" stroke="#222" stroke-width="2"/>
-      <g id="dp" class="eyes" fill="#222"><circle cx="330" cy="95" r="2.6"/><circle cx="346" cy="95" r="2.6"/></g>
-      <path d="M328 105 q10 5 20 0 q-10 -2 -20 0z" fill="#5a4a3a"/>
-      <text id="excl" x="334" y="62" font-size="22" font-weight="900" fill="#ff5d6c" style="opacity:0;transition:opacity .2s">!</text>
-    </g>
-
-    <g id="stu">
-      <rect x="92" y="138" width="38" height="32" rx="9" fill="#5db8ff"/>
-      <circle cx="111" cy="118" r="22" fill="#f2c9a0"/>
-      <path d="M88 116 a23 23 0 0 1 46 0 q-6 -9 -23 -9 q-17 0 -23 9z" fill="#2a1a10"/>
-      <g class="eyes">
-        <circle cx="103" cy="120" r="5.5" fill="#fff"/><circle cx="119" cy="120" r="5.5" fill="#fff"/>
-        <circle cx="104" cy="121" r="2.4" fill="#222"/><circle cx="118" cy="121" r="2.4" fill="#222"/>
-      </g>
-      <rect id="lidL" x="97" y="114" width="12" height="0" fill="#f2c9a0"/>
-      <rect id="lidR" x="113" y="114" width="12" height="0" fill="#f2c9a0"/>
-      <path id="mouth" d="M105 132 q6 3 12 0" stroke="#7a3b2a" fill="none" stroke-width="1.8" stroke-linecap="round"/>
-      <path id="sweat" d="M136 106 q-5 8 0 11 q5 -3 0 -11z" fill="#8fd3ff" style="opacity:0;transition:opacity .3s"/>
-      <g id="zzz" class="zzz" style="opacity:0;transition:opacity .3s"><text x="128" y="92" font-size="13">Z</text><text x="138" y="80" font-size="16">Z</text><text x="150" y="66" font-size="19">Z</text></g>
-    </g>
-    <rect x="62" y="152" width="112" height="10" rx="3" fill="#a06a35"/>
-    <rect x="70" y="162" width="6" height="14" fill="#6f4724"/><rect x="158" y="162" width="6" height="14" fill="#6f4724"/>
-    <rect x="94" y="146" width="28" height="6" rx="2" fill="#fff" opacity=".9"/>
-  </svg>
-  <div id="fx"></div>
-  </div>
-
-  <section id="start" class="card">
-    <p>Kamu duduk di baris ketiga. Semalam begadang. Dosen lagi menjelaskan sesuatu yang bahkan dia sendiri nggak yakin. Pilih tindakanmu dengan bijak.</p>
-    <p>🥱 <b>Ngantuk</b> penuh = tertidur. 👀 <b>Curiga</b> penuh = dipanggil maju. ⭐ <b>Gaya</b> adalah skor akhirmu.</p>
-    <button class="main" id="btnStart">Mulai Kuliah</button>
-    <div class="small" id="best"></div>
+  <section id="start">
+    <div class="logo">🎓</div>
+    <h1>Mahasiswa Baru</h1>
+    <p class="sub">Semester Pertama yang Berantakan</p>
+    <p class="blurb">Pilihanmu menentukan siapa temanmu, siapa gebetanmu, dan apakah kamu selamat dari tugas kelompok.</p>
+    <button class="primary" id="startBtn">▶ Mulai Cerita Baru</button>
+    <button class="secondary hidden" id="resume">⏩ Lanjutkan</button>
+    <a class="link" href="kelas.html">Main versi lama: Dosen Simulator</a>
+    <p class="fine">Hasil “mirip MBTI”, 6C, dan minat bakat di game ini hanya hiburan, bukan tes psikologi resmi.</p>
   </section>
 
-  <section id="game" class="hidden">
-    <div class="card">
-      <div class="top"><span id="clock"></span><span id="round"></span></div>
-      <div class="bars">
-        <div class="bar">🥱 Ngantuk <div class="track"><div class="fill" id="bS" style="background:var(--blue)"></div></div></div>
-        <div class="bar">👀 Curiga Dosen <div class="track"><div class="fill" id="bC" style="background:var(--red)"></div></div></div>
-        <div class="bar">⭐ Gaya: <b id="pts">0</b></div>
+  <section id="create" class="hidden">
+    <h2>Siapa kamu?</h2>
+    <label>Nama</label>
+    <div class="inline">
+      <input id="nameIn" maxlength="15" placeholder="Nama kamu" autocomplete="off">
+      <button class="ghost" id="randName" title="Acak nama">🎲</button>
+    </div>
+    <div class="err" id="nameErr"></div>
+    <label>Kamu</label>
+    <div id="genderPick" class="inline"></div>
+    <label>Teman dekat pertamamu</label>
+    <div id="temanPick" class="picks"></div>
+    <button class="primary" id="goBtn">Berangkat ke kampus ▶</button>
+    <button class="ghost wide" id="backTitle">← Kembali</button>
+  </section>
+
+  <section id="play" class="hidden">
+    <div id="stage" class="bg-terminal">
+      <div id="deco"></div>
+      <div id="sceneTitle"></div>
+      <div id="present"></div>
+      <div id="introcard" class="hidden"></div>
+      <div id="cards" class="hidden"></div>
+    </div>
+    <div id="dlg">
+      <div id="who" class="hidden"></div>
+      <div id="txt"></div>
+      <div id="opts"></div>
+      <div id="dinput" class="hidden">
+        <input id="dtext" maxlength="140" placeholder="Ketik apa yang kamu lakukan/katakan..." autocomplete="off">
+        <button id="dsend" class="primary">Kirim</button>
       </div>
-    </div>
-    <div class="card">
-      <div class="emoji" id="ev-emoji"></div>
-      <p id="ev-text"></p>
-      <div id="choices"></div>
-      <div id="result" class="result hidden"></div>
-      <button class="main hidden" id="btnNext">Lanjut ➜</button>
+      <button id="next" class="next hidden">Lanjut ▶</button>
     </div>
   </section>
 
-  <section id="end" class="card hidden">
-    <div class="emoji" id="end-emoji"></div>
-    <h2 id="end-title" style="text-align:center;margin:6px 0"></h2>
-    <p id="end-desc" style="text-align:center"></p>
-    <div class="big" id="end-score"></div>
-    <canvas id="cv" width="800" height="800"></canvas>
-    <button class="main" id="btnShare">📤 Bagikan Hasil</button>
-    <button class="main" id="btnAgain" style="background:#5dffa0">🔁 Main Lagi</button>
+  <section id="recap" class="hidden">
+    <div id="recapBody"></div>
+    <button class="primary" id="recapNext"></button>
+    <button class="ghost wide hidden" id="recapMenu"></button>
   </section>
-  <div class="small">Dibuat untuk mahasiswa yang pernah pura-pura paham. 😌</div>
-</main>
+</div>
 
-<script>
-// Efek: s = ngantuk, c = curiga, p = gaya
-const EVENTS = [
-  { e:"📊", t:"Dosen mulai slide ke-47 dengan 300 kata per halaman. Matamu mulai berat.", o:[
-    ["Minum kopi sachet dari tas", {s:-25,c:5,p:5}, "Kopi hangat menyelamatkanmu. Aromanya menyebar sedikit."],
-    ["Pura-pura mencatat (padahal gambar)", {s:5,c:-10,p:10}, "Gambar kucing di buku catatanmu terlihat sangat serius."],
-    ["Tutup mata sebentar 'mikir'", {s:-10,c:20,p:-5}, "Kamu terlihat sangat tenang. Terlalu tenang."]]},
-  { e:"🙋", t:"Dosen: \"Ada yang bisa jelaskan ulang apa yang barusan saya bilang?\"", o:[
-    ["Tunduk pura-pura baca buku", {s:0,c:20,p:0}, "Ketahuan menghindar. Dosen menatap ke arahmu."],
-    ["Jawab asal tapi percaya diri", {s:-10,c:-15,p:20}, "Dosen mengangguk, \"Hmm, menarik.\" Kamu sendiri bingung."],
-    ["Colek teman sebelah", {s:0,c:10,p:5}, "Temanmu menjawab. Kamu berutang gorengan."]]},
-  { e:"📱", t:"HP-mu bergetar. Grup kelas: \"Ada yang udah ngerjain tugas?\"", o:[
-    ["Balas diam-diam di bawah meja", {s:-10,c:25,p:10}, "Jempolmu cepat, tapi dosen punya mata elang."],
-    ["Abaikan, fokus ke dosen", {s:10,c:-5,p:5}, "Kamu hebat, tapi jadi makin ngantuk."],
-    ["Taruh HP di tas, aman", {s:0,c:-10,p:0}, "Aman, walau penasaran setengah mati."]]},
-  { e:"🍜", t:"Perutmu keroncongan, suaranya terdengar sampai depan kelas.", o:[
-    ["Batuk keras menutupi suara", {s:0,c:20,p:5}, "Batukmu terlalu dramatis. Satu kelas menoleh."],
-    ["Makan permen diam-diam", {s:-15,c:10,p:5}, "Kriuk. Permennya ternyata keras."],
-    ["Pasrah dan tahan", {s:10,c:0,p:0}, "Perutmu pasrah, matamu ikut pasrah."]]},
-  { e:"🪑", t:"Kursi di belakangmu berderit keras. Dosen berhenti bicara dan melihat ke arahmu.", o:[
-    ["Pasang wajah serius mengangguk", {s:-10,c:-10,p:15}, "Dosen tersenyum, merasa dipahami."],
-    ["Menunduk dalam-dalam", {s:5,c:20,p:-5}, "Dosen mengira kamu tertidur."],
-    ["Tanya \"Pak, boleh diulang?\"", {s:-5,c:-20,p:20}, "Pertanyaan sakti! Dosen senang diminta mengulang."]]},
-  { e:"🧊", t:"AC kelas dingin banget, hangat dan nyaman. Terlalu nyaman.", o:[
-    ["Cubit paha sendiri", {s:-20,c:0,p:5}, "Sakit, tapi segar."],
-    ["Pakai jaket, sandaran sedikit", {s:15,c:5,p:0}, "Kenyamanan adalah musuh terbesarmu."],
-    ["Berdiri minta izin ke toilet", {s:-30,c:15,p:-5}, "Kamu kabur sebentar. Cuci muka, bangkit lagi."]]},
-  { e:"📝", t:"Dosen: \"Besok ada kuis dadakan.\" Seluruh kelas panik.", o:[
-    ["Catat semuanya sekarang", {s:-15,c:-10,p:15}, "Mendadak rajin. Dosen terkesan."],
-    ["Pura-pura nggak dengar", {s:10,c:5,p:-5}, "Tenang, besok bisa nyontek ... mungkin."],
-    ["Foto papan tulis", {s:0,c:0,p:10}, "Foto 200 buah, yang dibaca 0."]]},
-  { e:"😂", t:"Dosen bercanda garing. Satu kelas hening, lalu seseorang tertawa canggung.", o:[
-    ["Tertawa keras biar nggak canggung", {s:-10,c:-15,p:15}, "Dosen menunjuk: \"Nah, ini baru mahasiswa paham!\""],
-    ["Menahan tawa sampai bergetar", {s:0,c:15,p:10}, "Bahumu bergetar. Dosen bingung."],
-    ["Tanpa ekspresi sama sekali", {s:5,c:5,p:0}, "Aman. Tapi suasana makin dingin."]]},
-  { e:"🔋", t:"Powerbank temanmu menyala dan lampunya berkedip terang di tengah kelas.", o:[
-    ["Tutup pakai tangan, sok bantu", {s:0,c:-5,p:10}, "Pahlawan tak dikenal."],
-    ["Bisik: \"Matiin woi!\"", {s:0,c:20,p:5}, "Bisikanmu lebih keras dari lampunya."],
-    ["Pura-pura nggak lihat", {s:5,c:10,p:0}, "Dosen melihat ke arah teman, lalu ke arahmu."]]},
-  { e:"👨‍🏫", t:"Dosen berjalan pelan ke arah barisanmu sambil menjelaskan.", o:[
-    ["Buka buku, pura-pura baca", {s:5,c:-15,p:10}, "Dosen lewat sambil mengangguk puas."],
-    ["Tatap mata dosen terus", {s:-10,c:-5,p:15}, "Kontak mata total. Kamu terlihat sangat tertarik."],
-    ["Geser badan sembunyi di balik teman", {s:0,c:25,p:-5}, "Teman badan besar yang jadi tamengmu. Mencurigakan."]]},
-  { e:"🎧", t:"Kamu punya earphone kecil. Lagu favoritmu baru rilis.", o:[
-    ["Pakai satu sambil rambut menutupi", {s:-20,c:30,p:15}, "Berisiko, tapi lagunya enak banget."],
-    ["Simpan dulu, nanti aja", {s:5,c:-5,p:0}, "Disiplin. Hidup terasa hampa."],
-    ["Dengerin lewat HP volume 1", {s:-10,c:10,p:5}, "Samar-samar terdengar, mirip nyamuk."]]},
-  { e:"📚", t:"Dosen membagikan makalah. \"Kerjakan berkelompok, 5 menit!\"", o:[
-    ["Ambil peran notulen", {s:-10,c:-15,p:15}, "Notulen aman karena selalu 'sibuk menulis'."],
-    ["Jadi presentator dadakan", {s:-25,c:-10,p:25}, "Adrenalin menghapus ngantukmu!"],
-    ["Ikut sekadar mengangguk", {s:10,c:5,p:0}, "Pura-pura kontribusi itu bakat."]]},
-  { e:"⏰", t:"Jam menunjukkan masih 45 menit lagi. Waktu terasa melambat.", o:[
-    ["Hitung ubin lantai", {s:5,c:-5,p:5}, "Ada 48 ubin. Kamu tahu karena menghitungnya."],
-    ["Doodle wajah dosen", {s:-5,c:0,p:10}, "Mirip! Kamu berbakat tapi jangan ketahuan."],
-    ["Pasrah tidur sambil duduk tegap", {s:-5,c:15,p:-10}, "Tidur dengan mata terbuka itu skill, tapi riskan."]]},
-  { e:"🚪", t:"Pintu kelas terbuka. Ada mahasiswa terlambat masuk sambil membawa gorengan.", o:[
-    ["Minta gorengannya pelan-pelan", {s:-10,c:15,p:10}, "Rejeki anak kuliah. Minyaknya merembes ke buku."],
-    ["Fokus ke dosen saja", {s:5,c:-10,p:5}, "Gorengan itu terus menggodamu."],
-    ["Ikut telat ke kelas berikutnya", {s:0,c:5,p:5}, "Planning ke depan. Visioner."]]},
-  { e:"🎤", t:"Dosen: \"Kita absen manual hari ini, tanda tangan ya.\"", o:[
-    ["Tanda tangan sendiri, rapi", {s:0,c:-5,p:10}, "Beres, tanpa drama."],
-    ["Tanda tangan teman yang bolos", {s:0,c:30,p:20}, "Gaya premannya tinggi, risikonya juga."],
-    ["Pura-pura nggak lihat lembar absen", {s:0,c:10,p:-10}, "Lembar absen berjalan melewatimu. Kamu lupa tanda tangan."]]}
-];
+<button id="phoneBtn" class="hidden" aria-label="Buka HP">📱<span id="badge" class="hidden"></span></button>
+<div id="phone" class="hidden">
+  <div class="frame">
+    <div class="ptop">
+      <button id="phoneBack" class="hidden">←</button>
+      <b id="phoneTitle"></b>
+      <button id="phoneClose">✕</button>
+    </div>
+    <div id="phoneBody"></div>
+  </div>
+</div>
+<div id="toasts"></div>
 
-const TOTAL = 12;
-const st = { s:30, c:10, p:0, round:0, used:[], ev:null, over:false };
-const $ = id => document.getElementById(id);
-const clamp = n => Math.max(0, Math.min(100, n));
-const fmtClock = r => { const m = 8*60 + Math.round(r*90/TOTAL); return String(Math.floor(m/60)).padStart(2,"0")+":"+String(m%60).padStart(2,"0"); };
-
-function show(id) { ["start","game","end"].forEach(x => $(x).classList.toggle("hidden", x !== id)); $("sceneWrap").classList.toggle("hidden", id === "end"); }
-function render() {
-  $("bS").style.width = st.s + "%"; $("bC").style.width = st.c + "%";
-  $("pts").textContent = st.p;
-  $("clock").textContent = "🕗 " + fmtClock(st.round);
-  $("round").textContent = "Sesi " + Math.min(st.round+1, TOTAL) + "/" + TOTAL;
-  updateScene();
-}
-
-function updateScene() {
-  const lid = Math.round(st.s / 100 * 11);
-  $("lidL").setAttribute("height", lid); $("lidR").setAttribute("height", lid);
-  $("stu").setAttribute("class", st.s > 75 ? "nod2" : st.s > 50 ? "nod" : "");
-  $("zzz").style.opacity = st.s > 50 ? 1 : 0;
-  $("dosen").setAttribute("class", st.c >= 60 ? "alert" : "");
-  $("excl").style.opacity = st.c >= 60 ? 1 : 0;
-  $("dp").setAttribute("transform", st.c >= 60 ? "translate(-3 2)" : "");
-  $("sweat").style.opacity = st.c >= 40 ? 1 : 0;
-  $("mouth").setAttribute("d", st.c >= 60 ? "M105 135 q6 -5 12 0" : "M105 132 q6 3 12 0");
-  $("sceneWrap").classList.toggle("danger", st.c >= 70);
-}
-function fxAnim(cls) { const w = $("sceneWrap"); w.classList.remove("shake","good"); void w.offsetWidth; w.classList.add(cls); }
-function popDeltas(eff) {
-  const items = [["🥱", eff.s + 4, true], ["👀", eff.c, true], ["⭐", eff.p, false]];
-  items.forEach(([ic, v, badUp]) => {
-    if (!v) return;
-    const d = document.createElement("div"); d.className = "pill";
-    const good = badUp ? v < 0 : v > 0;
-    d.style.color = good ? "#5dffa0" : "#ff5d6c";
-    d.textContent = ic + " " + (v > 0 ? "+" : "") + v;
-    $("fx").appendChild(d); setTimeout(() => d.remove(), 1400);
-  });
-}
-function bestScore() { return +(localStorage.getItem("dosen-best") || 0); }
-
-function start() {
-  Object.assign(st, { s:30, c:10, p:0, round:0, used:[], ev:null, over:false });
-  updateScene();
-  show("game"); nextEvent();
-}
-function nextEvent() {
-  if (st.round >= TOTAL) return finish("survive");
-  let i; do { i = Math.floor(Math.random()*EVENTS.length); } while (st.used.includes(i));
-  st.used.push(i); st.ev = EVENTS[i];
-  $("ev-emoji").textContent = st.ev.e; $("ev-text").textContent = st.ev.t;
-  const box = $("choices"); box.innerHTML = "";
-  st.ev.o.forEach(([label, eff, res]) => {
-    const b = document.createElement("button"); b.textContent = label;
-    b.onclick = () => choose(eff, res); box.appendChild(b);
-  });
-  $("result").classList.add("hidden"); $("btnNext").classList.add("hidden");
-  render();
-}
-function choose(eff, res) {
-  // Ngantuk naik sedikit tiap sesi supaya game tidak mudah
-  st.s = clamp(st.s + eff.s + 4); st.c = clamp(st.c + eff.c); st.p = Math.max(0, st.p + eff.p);
-  st.round++;
-  popDeltas(eff);
-  if (eff.c >= 15) fxAnim("shake"); else if (eff.p >= 15) fxAnim("good");
-  $("choices").innerHTML = "";
-  const r = $("result"); r.textContent = res; r.classList.remove("hidden");
-  render();
-  if (st.s >= 100) return setTimeout(() => finish("tidur"), 900);
-  if (st.c >= 100) return setTimeout(() => finish("kepergok"), 900);
-  $("btnNext").classList.remove("hidden");
-}
-
-const ENDINGS = {
-  tidur:   { e:"💤", t:"Tertidur Ngorok", d:"Kepalamu jatuh ke meja. Suaramu bergema. Dosen berhenti bicara." },
-  kepergok:{ e:"🚨", t:"Dipanggil Maju!", d:"\"Kamu yang di baris ketiga. Coba jelaskan di depan.\" Kelas hening." },
-};
-function survivalEnding() {
-  const sc = st.p;
-  if (sc >= 140) return { e:"👑", t:"Mahasiswa Legenda", d:"Dosen mengira kamu paling paham. Kamu sendiri tidak tahu apa-apa." };
-  if (sc >= 90)  return { e:"😎", t:"Ahli Pura-pura Paham", d:"Kamu selamat dengan gaya. Nilai aman, hati tenang." };
-  if (sc >= 50)  return { e:"🙂", t:"Mahasiswa Standar", d:"Selamat sampai akhir. Tidak ada yang curiga. Atau pura-pura tidak curiga." };
-  return { e:"😮‍💨", t:"Bertahan Hidup Tipis-tipis", d:"Kamu lolos, tapi keringat dingin sepanjang kuliah." };
-}
-function finish(kind) {
-  st.over = true;
-  const end = kind === "survive" ? survivalEnding() : ENDINGS[kind];
-  const score = kind === "survive" ? st.p + Math.round((100 - st.c) / 2) : Math.round(st.p / 2);
-  st.result = { ...end, score, kind };
-  if (score > bestScore()) localStorage.setItem("dosen-best", score);
-  $("end-emoji").textContent = end.e; $("end-title").textContent = end.t;
-  $("end-desc").textContent = end.d; $("end-score").textContent = score + " poin";
-  drawCard(); show("end"); updateBest();
-}
-function updateBest() { $("best").textContent = bestScore() ? "🏆 Skor terbaikmu: " + bestScore() : ""; }
-
-function wrap(ctx, text, x, y, maxW, lh) {
-  let line = "";
-  text.split(" ").forEach(w => {
-    const test = line + w + " ";
-    if (ctx.measureText(test).width > maxW && line) { ctx.fillText(line, x, y); line = w + " "; y += lh; }
-    else line = test;
-  });
-  ctx.fillText(line, x, y);
-}
-function drawCard() {
-  const cv = $("cv"), ctx = cv.getContext("2d"), r = st.result;
-  const g = ctx.createLinearGradient(0,0,800,800); g.addColorStop(0,"#2b1055"); g.addColorStop(1,"#12121f");
-  ctx.fillStyle = g; ctx.fillRect(0,0,800,800);
-  ctx.textAlign = "center"; ctx.fillStyle = "#fff";
-  ctx.font = "bold 44px sans-serif"; ctx.fillText("🎓 DOSEN SIMULATOR", 400, 90);
-  ctx.font = "200px sans-serif"; ctx.fillText(r.e, 400, 330);
-  ctx.fillStyle = "#ffcc4d"; ctx.font = "bold 62px sans-serif"; ctx.fillText(r.t, 400, 440);
-  ctx.fillStyle = "#fff"; ctx.font = "30px sans-serif"; wrap(ctx, r.d, 400, 510, 640, 40);
-  ctx.fillStyle = "#5dffa0"; ctx.font = "bold 76px sans-serif"; ctx.fillText(r.score + " poin", 400, 680);
-  ctx.fillStyle = "#ffffff99"; ctx.font = "26px sans-serif"; ctx.fillText("Berani coba kalahin skorku?", 400, 740);
-}
-async function share() {
-  const r = st.result, text = `Aku dapat "${r.t}" (${r.score} poin) di Dosen Simulator! Berani coba kalahin? ${location.href}`;
-  const blob = await new Promise(res => $("cv").toBlob(res, "image/png"));
-  const file = new File([blob], "dosen-simulator.png", { type: "image/png" });
-  try {
-    if (navigator.canShare && navigator.canShare({ files:[file] })) return await navigator.share({ files:[file], text });
-    if (navigator.share) return await navigator.share({ text });
-  } catch (_) { return; }
-  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "dosen-simulator.png"; a.click();
-  navigator.clipboard && navigator.clipboard.writeText(text);
-  alert("Gambar diunduh & teks disalin. Tempel di story/grup kamu!");
-}
-
-$("btnStart").onclick = start; $("btnNext").onclick = nextEvent;
-$("btnAgain").onclick = start; $("btnShare").onclick = share;
-updateBest(); updateScene();
-</script>
+<script src="js/config.js"></script>
+<script src="js/data.js"></script>
+<script src="js/story.js"></script>
+<script src="js/engine.js"></script>
 </body>
 </html>
