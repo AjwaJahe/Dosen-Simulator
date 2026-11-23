@@ -63,7 +63,8 @@ function portrait(id, size = "") {
   const el = document.createElement("div");
   el.className = "portrait " + size;
   el.style.setProperty("--pc", c.color);
-  el.textContent = id === "mc" ? (S && S.gender === "f" ? "👩‍🎓" : "🧑‍🎓") : c.emoji;
+  if (ART[id]) el.innerHTML = ART[id];
+  else el.textContent = id === "mc" ? (S && S.gender === "f" ? "👩‍🎓" : "🧑‍🎓") : c.emoji;
   if (imgOk[id] !== false) {
     const im = new Image();
     im.onload = () => { imgOk[id] = true; el.textContent = ""; im.alt = ""; el.appendChild(im); };
@@ -690,6 +691,23 @@ function redeem(raw) {
   return { ok: true, msg: "Kode berhasil! Jatah ganti nama bertambah 1." };
 }
 
+/* ---------- developer ---------- */
+function openDev() {
+  if (prompt("Sandi developer:") !== "223") return;
+  const body = $("devBody");
+  body.innerHTML = "";
+  Object.keys(CHARS).forEach((id) => {
+    const card = document.createElement("div");
+    card.className = "devcard";
+    card.appendChild(portrait(id, "dev"));
+    const n = document.createElement("div");
+    n.textContent = `${CHARS[id].name} (${id})`;
+    card.appendChild(n);
+    body.appendChild(card);
+  });
+  $("dev").classList.remove("hidden");
+}
+
 /* ---------- init ---------- */
 function initTitle() {
   const sv = loadSave();
@@ -701,6 +719,8 @@ window.addEventListener("DOMContentLoaded", () => {
   initTitle();
   $("startBtn").onclick = () => { renderCreate(); show("create"); };
   $("backTitle").onclick = () => show("start");
+  $("devBtn").onclick = openDev;
+  $("devClose").onclick = () => $("dev").classList.add("hidden");
   $("randName").onclick = () => { $("nameIn").value = RANDOM_NAMES[Math.floor(Math.random() * RANDOM_NAMES.length)]; };
   $("goBtn").onclick = startNew;
   $("next").onclick = advance;
