@@ -23,19 +23,108 @@
   .fill { height:100%; width:0; transition:width .4s; }
   .top { display:flex; justify-content:space-between; font-size:.9rem; opacity:.8; margin-bottom:10px; }
   .result { background:#0004; border-left:4px solid var(--acc); padding:10px 12px; border-radius:8px; margin-top:12px; }
-  .hidden { display:none; }
+  .hidden { display:none !important; }
   .big { font-size:2.4rem; text-align:center; color:var(--acc); font-weight:800; }
   canvas { width:100%; border-radius:12px; margin-top:10px; }
   .small { font-size:.8rem; opacity:.6; text-align:center; margin-top:8px; }
+
+  #sceneWrap { position:relative; margin-bottom:14px; border-radius:16px; overflow:hidden; box-shadow:0 6px 20px #0006; border:2px solid #ffffff14; transition:box-shadow .3s; }
+  #sceneWrap.danger { box-shadow:0 0 0 3px var(--red), 0 0 30px #ff5d6c88; }
+  #sceneWrap.shake { animation:shake .45s; }
+  #sceneWrap.good { animation:goodpulse .5s; }
+  svg { display:block; width:100%; height:auto; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-7px)} 40%{transform:translateX(7px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(5px)} }
+  @keyframes goodpulse { 50%{transform:scale(1.03)} }
+  @keyframes floatz { 0%{transform:translate(0,0);opacity:0} 20%{opacity:1} 100%{transform:translate(14px,-26px);opacity:0} }
+  @keyframes glare { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
+  @keyframes blink { 0%,92%,100%{transform:scaleY(1)} 96%{transform:scaleY(.1)} }
+  @keyframes nodA { 0%,100%{transform:rotate(0)} 50%{transform:rotate(7deg)} }
+  @keyframes nodB { 0%,100%{transform:rotate(4deg)} 50%{transform:rotate(16deg)} }
+  @keyframes rise { 0%{opacity:0;transform:translateY(10px)} 15%{opacity:1} 100%{opacity:0;transform:translateY(-34px)} }
+  @keyframes pop { 0%{transform:scale(.4);opacity:0} 70%{transform:scale(1.2)} 100%{transform:scale(1);opacity:1} }
+  @keyframes slide { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
+  .zzz text { animation:floatz 2.4s infinite; font-weight:800; fill:#cfe8ff; }
+  .zzz text:nth-child(2){animation-delay:.8s} .zzz text:nth-child(3){animation-delay:1.6s}
+  #stu { transform-box:fill-box; transform-origin:50% 100%; transition:transform .4s; }
+  #stu.nod { animation:nodA 2.2s infinite; } #stu.nod2 { animation:nodB 1.6s infinite; }
+  #dosen { transform-box:fill-box; transform-origin:50% 100%; }
+  #dosen.alert { animation:glare .6s infinite; }
+  .eyes { transform-box:fill-box; transform-origin:center; animation:blink 4s infinite; }
+  #fx { position:absolute; inset:0; pointer-events:none; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; }
+  .pill { font-weight:800; padding:3px 10px; border-radius:20px; background:#000a; animation:rise 1.3s forwards; font-size:.95rem; }
+  .emoji { animation:pop .35s; }
+  #choices button { animation:slide .3s backwards; }
+  #choices button:nth-child(2){animation-delay:.07s} #choices button:nth-child(3){animation-delay:.14s}
+  .title { background:linear-gradient(90deg,#ffcc4d,#ff5d6c); -webkit-background-clip:text; background-clip:text; color:transparent; }
 </style>
 </head>
 <body>
 <main>
-  <h1>🎓 Dosen Simulator</h1>
+  <h1 class="title">🎓 Dosen Simulator</h1>
   <div class="sub">Bertahan 90 menit tanpa ketahuan ngantuk.</div>
 
+  <div id="sceneWrap">
+  <svg id="scene" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ilustrasi kelas">
+    <defs>
+      <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#34345e"/><stop offset="1" stop-color="#262646"/></linearGradient>
+    </defs>
+    <rect width="400" height="200" fill="url(#wall)"/>
+    <rect y="165" width="400" height="35" fill="#3b2f4d"/>
+    <rect y="163" width="400" height="4" fill="#2a2038"/>
+    <circle cx="55" cy="42" r="20" fill="#f4f1e8" stroke="#8b5a2b" stroke-width="4"/>
+    <line x1="55" y1="42" x2="55" y2="30" stroke="#222" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="55" y1="42" x2="64" y2="46" stroke="#222" stroke-width="2.5" stroke-linecap="round"/>
+    <rect x="112" y="18" width="170" height="78" rx="4" fill="#1f5a44" stroke="#8b5a2b" stroke-width="5"/>
+    <text x="124" y="42" fill="#e8f5ee" font-size="13" font-family="monospace" font-weight="bold">BAB 7: ???</text>
+    <path d="M124 54 q10 -10 20 0 t20 0 t20 0 t20 0 t20 0" stroke="#e8f5ee" fill="none" stroke-width="1.6" opacity=".8"/>
+    <path d="M124 68 h90 M124 78 h60" stroke="#e8f5ee" stroke-width="1.6" opacity=".6"/>
+    <text x="238" y="84" fill="#ffcc4d" font-size="16" font-family="monospace">x=?</text>
+
+    <g id="friend">
+      <rect x="190" y="136" width="32" height="30" rx="8" fill="#9b6bff"/>
+      <circle cx="206" cy="122" r="17" fill="#e0b48a"/>
+      <path d="M189 120 a17 17 0 0 1 34 0 z" fill="#3a2a1a"/>
+      <circle cx="200" cy="124" r="2" fill="#222"/><circle cx="212" cy="124" r="2" fill="#222"/>
+      <path d="M201 131 q5 3 10 0" stroke="#222" fill="none" stroke-width="1.5"/>
+      <rect x="165" y="150" width="82" height="9" rx="3" fill="#8b5a2b"/>
+    </g>
+
+    <g id="dosen">
+      <line x1="338" y1="122" x2="298" y2="76" stroke="#d9b36a" stroke-width="3" stroke-linecap="round"/>
+      <rect x="318" y="112" width="40" height="55" rx="10" fill="#c0392b"/>
+      <polygon points="338,114 333,140 338,148 343,140" fill="#ffd36a"/>
+      <rect x="326" y="164" width="9" height="4" fill="#222"/><rect x="341" y="164" width="9" height="4" fill="#222"/>
+      <circle cx="338" cy="94" r="21" fill="#e0b48a"/>
+      <path d="M317 90 a21 21 0 0 1 42 0 q-8 -9 -21 -9 q-13 0 -21 9z" fill="#bdbdbd"/>
+      <g stroke="#222" stroke-width="2" fill="#fff"><circle cx="330" cy="95" r="7"/><circle cx="346" cy="95" r="7"/></g>
+      <line x1="337" y1="95" x2="339" y2="95" stroke="#222" stroke-width="2"/>
+      <g id="dp" class="eyes" fill="#222"><circle cx="330" cy="95" r="2.6"/><circle cx="346" cy="95" r="2.6"/></g>
+      <path d="M328 105 q10 5 20 0 q-10 -2 -20 0z" fill="#5a4a3a"/>
+      <text id="excl" x="334" y="62" font-size="22" font-weight="900" fill="#ff5d6c" style="opacity:0;transition:opacity .2s">!</text>
+    </g>
+
+    <g id="stu">
+      <rect x="92" y="138" width="38" height="32" rx="9" fill="#5db8ff"/>
+      <circle cx="111" cy="118" r="22" fill="#f2c9a0"/>
+      <path d="M88 116 a23 23 0 0 1 46 0 q-6 -9 -23 -9 q-17 0 -23 9z" fill="#2a1a10"/>
+      <g class="eyes">
+        <circle cx="103" cy="120" r="5.5" fill="#fff"/><circle cx="119" cy="120" r="5.5" fill="#fff"/>
+        <circle cx="104" cy="121" r="2.4" fill="#222"/><circle cx="118" cy="121" r="2.4" fill="#222"/>
+      </g>
+      <rect id="lidL" x="97" y="114" width="12" height="0" fill="#f2c9a0"/>
+      <rect id="lidR" x="113" y="114" width="12" height="0" fill="#f2c9a0"/>
+      <path id="mouth" d="M105 132 q6 3 12 0" stroke="#7a3b2a" fill="none" stroke-width="1.8" stroke-linecap="round"/>
+      <path id="sweat" d="M136 106 q-5 8 0 11 q5 -3 0 -11z" fill="#8fd3ff" style="opacity:0;transition:opacity .3s"/>
+      <g id="zzz" class="zzz" style="opacity:0;transition:opacity .3s"><text x="128" y="92" font-size="13">Z</text><text x="138" y="80" font-size="16">Z</text><text x="150" y="66" font-size="19">Z</text></g>
+    </g>
+    <rect x="62" y="152" width="112" height="10" rx="3" fill="#a06a35"/>
+    <rect x="70" y="162" width="6" height="14" fill="#6f4724"/><rect x="158" y="162" width="6" height="14" fill="#6f4724"/>
+    <rect x="94" y="146" width="28" height="6" rx="2" fill="#fff" opacity=".9"/>
+  </svg>
+  <div id="fx"></div>
+  </div>
+
   <section id="start" class="card">
-    <div class="emoji">😴👨‍🏫</div>
     <p>Kamu duduk di baris ketiga. Semalam begadang. Dosen lagi menjelaskan sesuatu yang bahkan dia sendiri nggak yakin. Pilih tindakanmu dengan bijak.</p>
     <p>🥱 <b>Ngantuk</b> penuh = tertidur. 👀 <b>Curiga</b> penuh = dipanggil maju. ⭐ <b>Gaya</b> adalah skor akhirmu.</p>
     <button class="main" id="btnStart">Mulai Kuliah</button>
@@ -143,17 +232,44 @@ const $ = id => document.getElementById(id);
 const clamp = n => Math.max(0, Math.min(100, n));
 const fmtClock = r => { const m = 8*60 + Math.round(r*90/TOTAL); return String(Math.floor(m/60)).padStart(2,"0")+":"+String(m%60).padStart(2,"0"); };
 
-function show(id) { ["start","game","end"].forEach(x => $(x).classList.toggle("hidden", x !== id)); }
+function show(id) { ["start","game","end"].forEach(x => $(x).classList.toggle("hidden", x !== id)); $("sceneWrap").classList.toggle("hidden", id === "end"); }
 function render() {
   $("bS").style.width = st.s + "%"; $("bC").style.width = st.c + "%";
   $("pts").textContent = st.p;
   $("clock").textContent = "🕗 " + fmtClock(st.round);
   $("round").textContent = "Sesi " + Math.min(st.round+1, TOTAL) + "/" + TOTAL;
+  updateScene();
+}
+
+function updateScene() {
+  const lid = Math.round(st.s / 100 * 11);
+  $("lidL").setAttribute("height", lid); $("lidR").setAttribute("height", lid);
+  $("stu").setAttribute("class", st.s > 75 ? "nod2" : st.s > 50 ? "nod" : "");
+  $("zzz").style.opacity = st.s > 50 ? 1 : 0;
+  $("dosen").setAttribute("class", st.c >= 60 ? "alert" : "");
+  $("excl").style.opacity = st.c >= 60 ? 1 : 0;
+  $("dp").setAttribute("transform", st.c >= 60 ? "translate(-3 2)" : "");
+  $("sweat").style.opacity = st.c >= 40 ? 1 : 0;
+  $("mouth").setAttribute("d", st.c >= 60 ? "M105 135 q6 -5 12 0" : "M105 132 q6 3 12 0");
+  $("sceneWrap").classList.toggle("danger", st.c >= 70);
+}
+function fxAnim(cls) { const w = $("sceneWrap"); w.classList.remove("shake","good"); void w.offsetWidth; w.classList.add(cls); }
+function popDeltas(eff) {
+  const items = [["🥱", eff.s + 4, true], ["👀", eff.c, true], ["⭐", eff.p, false]];
+  items.forEach(([ic, v, badUp]) => {
+    if (!v) return;
+    const d = document.createElement("div"); d.className = "pill";
+    const good = badUp ? v < 0 : v > 0;
+    d.style.color = good ? "#5dffa0" : "#ff5d6c";
+    d.textContent = ic + " " + (v > 0 ? "+" : "") + v;
+    $("fx").appendChild(d); setTimeout(() => d.remove(), 1400);
+  });
 }
 function bestScore() { return +(localStorage.getItem("dosen-best") || 0); }
 
 function start() {
   Object.assign(st, { s:30, c:10, p:0, round:0, used:[], ev:null, over:false });
+  updateScene();
   show("game"); nextEvent();
 }
 function nextEvent() {
@@ -173,6 +289,8 @@ function choose(eff, res) {
   // Ngantuk naik sedikit tiap sesi supaya game tidak mudah
   st.s = clamp(st.s + eff.s + 4); st.c = clamp(st.c + eff.c); st.p = Math.max(0, st.p + eff.p);
   st.round++;
+  popDeltas(eff);
+  if (eff.c >= 15) fxAnim("shake"); else if (eff.p >= 15) fxAnim("good");
   $("choices").innerHTML = "";
   const r = $("result"); r.textContent = res; r.classList.remove("hidden");
   render();
@@ -240,7 +358,7 @@ async function share() {
 
 $("btnStart").onclick = start; $("btnNext").onclick = nextEvent;
 $("btnAgain").onclick = start; $("btnShare").onclick = share;
-updateBest();
+updateBest(); updateScene();
 </script>
 </body>
 </html>
