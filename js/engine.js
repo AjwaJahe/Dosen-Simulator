@@ -63,8 +63,14 @@ function portrait(id, size = "") {
   const el = document.createElement("div");
   el.className = "portrait " + size;
   el.style.setProperty("--pc", c.color);
-  if (ART[id]) el.innerHTML = ART[id];
-  else el.textContent = id === "mc" ? (S && S.gender === "f" ? "👩‍🎓" : "🧑‍🎓") : c.emoji;
+  const art = ART[id === "mc" ? (S && S.gender === "f" ? "mc_f" : "mc_m") : id];
+  if (art) {
+    el.innerHTML = art;
+    const bd = document.createElement("span");
+    bd.className = "badge-emoji";
+    bd.textContent = c.emoji;
+    el.appendChild(bd);
+  } else el.textContent = id === "mc" ? (S && S.gender === "f" ? "👩‍🎓" : "🧑‍🎓") : c.emoji;
   if (imgOk[id] !== false) {
     const im = new Image();
     im.onload = () => { imgOk[id] = true; el.textContent = ""; im.alt = ""; el.appendChild(im); };
